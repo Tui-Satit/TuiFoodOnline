@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Delivery Order</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .product {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .order-summary, .checkout {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .order-summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .quantity-controls {
+            display: flex;
+            gap: 5px;
+        }
+        .submit-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Order Section</h1>
+        <div id="product-list">
+            <div class="product" data-price="10">
+                <span>Pizza</span>
+                <div class="quantity-controls">
+                    <button onclick="addToOrder('Pizza', 10)">+</button>
+                    <button onclick="subtractFromOrder('Pizza', 10)">-</button>
+                </div>
+            </div>
+            <div class="product" data-price="8">
+                <span>Burger</span>
+                <div class="quantity-controls">
+                    <button onclick="addToOrder('Burger', 8)">+</button>
+                    <button onclick="subtractFromOrder('Burger', 8)">-</button>
+                </div>
+            </div>
+            <div class="product" data-price="7">
+                <span>Sushi</span>
+                <div class="quantity-controls">
+                    <button onclick="addToOrder('Sushi', 7)">+</button>
+                    <button onclick="subtractFromOrder('Sushi', 7)">-</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <ul id="order-list"></ul>
+            <p>Total: $<span id="order-total">0</span></p>
+        </div>
+
+        <div class="checkout">
+            <h2>Checkout</h2>
+            <form id="checkout-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required><br>
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required><br>
+                <label for="delivery-method">Delivery Method:</label><br>
+                <input type="radio" id="home" name="delivery" value="Home">
+                <label for="home">Home Delivery</label><br>
+                <input type="radio" id="pickup" name="delivery" value="Pick Up">
+                <label for="pickup">Pick Up at Shop</label><br>
+                <button type="submit" class="submit-btn">Submit Order</button>
+            </form>
+        </div>
+        <p id="order-summary"></p>
+    </div>
+
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        let order = [];
+        let total = 0;
+
+        function addToOrder(product, price) {
+            const existingProductIndex = order.findIndex(item => item.product === product);
+
+            if (existingProductIndex !== -1) {
+                order[existingProductIndex].quantity += 1;
+                order[existingProductIndex].price += price;
+            } else {
+                order.push({ product, price, quantity: 1 });
+            }
+
+            updateOrderSummary();
+        }
+
+        function subtractFromOrder(product, price) {
+            const existingProductIndex = order.findIndex(item => item.product === product);
+
+            if (existingProductIndex !== -1) {
+                order[existingProductIndex].quantity -= 1;
+                order[existingProductIndex].price -= price;
+
+                if (order[existingProductIndex].quantity === 0) {
+                    order.splice(existingProductIndex, 1);
+                }
+            }
+
+            updateOrderSummary();
+        }
+
+        function updateOrderSummary() {
+            const orderList = document.getElementById('order-list');
+            const orderTotal = document.getElementById('order-total');
+            orderList.innerHTML = '';
+            total = 0;
+
+            order.forEach(item => {
+                total += item.price;
+                const li = document.createElement('li');
+                li.textContent = `${item.product} x${item.quantity}: $${item.price}`;
+                orderList.appendChild(li);
+            });
+
+            orderTotal.textContent = total;
+        }
+
+        document.getElementById('checkout-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const deliveryMethod = document.querySelector('input[name="delivery"]:checked').value;
+
+            // Initialize LINE LIFF
+            liff.init({ liffId: '2006623827-WoBb293g' }).then(() => {
+                // Send checkout details to LINE LIFF
+                liff.sendMessages([{
+                    type: 'text',
+                    text: `Order Details:\nName: ${name}\nAddress: ${address}\nDelivery Method: ${deliveryMethod}\nTotal: $${total}\nItems:\n${order.map(item => `${item.product} x${item.quantity}: $${item.price}`).join('\n')}`
+                }]).then(() => {
+                    alert('Order sent to LINE!');
+                    // Reset order and form
+                    order = [];
+                    updateOrderSummary();
+                    event.target.reset();
+                }).catch((err) => {
+                    console.error('Error sending message:', err);
+                });
+            }).catch((err) => {
+                console.error('LIFF initialization failed:', err);
+            });
+        });
+    </script>
+</body>
+</html>

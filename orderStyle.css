@@ -1,0 +1,104 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+.container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    justify-content: center;
+}
+@media (max-width: 768px) { 
+    .container { padding: 10px; } 
+} 
+@media (max-width: 480px) { 
+    .container { padding: 5px; }
+}
+.product {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+}
+.order-summary, .checkout {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+}
+img {
+    width: 100%;
+    height: auto;
+    border-radius: 25px;
+}
+.headPage {
+    display: flex;
+    
+    width: px;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.gallery {
+    display: flex;
+    width: ;
+    margin-top: 10px;
+    background-color: #f5f2f2;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    font-weight: bold;
+}
+.galleryDes {
+    text-align: center;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+table, th, td {
+    border: 0px solid rgb(249, 248, 248);
+}
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+/* Default button styling */
+button {
+    padding: 8px 16px;
+    font-size: 16px;
+    border: 1px solid rgb(109, 109, 109);
+    border-radius: 15px;
+    background-color: whitesmoke; /* Primary background color */
+    color: rgb(12, 12, 12);
+    cursor: pointer;
+    transition: background-color 2.0s ease;
+}
+
+button:hover {
+    background-color: black; /* Darker shade for hover effect */
+    color: #ddd;
+}
+
+/* Small size button for tablets and smaller devices */
+@media (max-width: 768px) {
+    button {
+        padding: 4px 10px;
+        font-size: 14px;
+    }
+}
+
+/* Smaller size button for mobile phones */
+@media (max-width: 480px) {
+    button {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+}
